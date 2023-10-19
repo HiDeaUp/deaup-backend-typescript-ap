@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from 'path_to_prisma_service'; // Adjust the path
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { Injectable } from '@nestjs/common';
+import { User } from './user.entity'; // Adjust the path
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly prisma: PrismaService,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async validateUser(
@@ -15,10 +19,8 @@ export class AuthService {
     phone: string,
     password: string,
   ): Promise<any> {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        OR: [{ email }, { phone }],
-      },
+    const user = await this.userRepository.findOne({
+      where: [{ email }, { phone }],
     });
 
     if (user && (await bcrypt.compare(password, user.password))) {
