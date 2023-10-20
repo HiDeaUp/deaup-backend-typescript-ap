@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { version } from '@/package.json';
-
 @Injectable()
 export class AppService {
   getVersion(): string {
-    // Read version from package.json
+    // 
+    const version =
     return version;
   }
 }
+
+const packageJson =
+  path.dirname(require.resolve('package-name')) + '/package.json';

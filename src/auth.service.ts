@@ -4,7 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { Injectable } from '@nestjs/common';
+
 import { User } from './user.entity'; // Adjust the path
+import { TokenBlacklistService } from './token-blacklist.service';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +14,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly tokenBlacklistService: TokenBlacklistService,
   ) {}
 
   async validateUser(
@@ -35,5 +38,38 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  async register(userDto: any, ipAddress: string) {
+    const { email, phone, password } = userDto;
+
+    const existingUser = await this.userRepository.findOne({
+      where: [{ email }, { phone }],
+    });
+
+    if (existingUser) {
+      const field = existingUser.email ? 'email' : 'phone';
+      throw new Error(`${field} has already been taken`);
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = this.userRepository.create({
+      email,
+      phone,
+      password: hashedPassword,
+      ip_address: ipAddress,
+    });
+
+    await this.userRepository.save(user);
+
+    const payload = { email: user.email, phone: user.phone, sub: user.id };
+    const token = this.jwtService.sign(payload);
+
+    return { user, token };
+  }
+
+  logout(token: string) {
+    this.tokenBlacklistService.addToBlacklist(token);
   }
 }

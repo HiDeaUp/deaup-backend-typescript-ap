@@ -25,4 +25,7 @@ export class User {
 
   @UpdateDateColumn()
   last_sign_in: Date;
+
+  @Column({ nullable: true })
+  ip_address: string;
 }
