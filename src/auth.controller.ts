@@ -49,7 +49,7 @@ export class AuthController {
   }
 
   @Delete('sign-out')
-  async logout(@Headers('authorization') token: string, @Res() res) {
+  async logout(@Headers('authorization') token: string, @Request() res) {
     token = token.split('Bearer ')[1]; // Extract the token from the header
     this.authService.logout(token);
     return res.status(HttpStatus.NO_CONTENT).send();
