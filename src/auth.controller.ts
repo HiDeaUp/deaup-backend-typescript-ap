@@ -9,6 +9,7 @@ import {
   Headers,
   UnauthorizedException,
 } from '@nestjs/common';
+
 import { AuthService } from './auth.service';
 
 @Controller('users')
@@ -27,7 +28,8 @@ export class AuthController {
     }
     const token = await this.authService.login(user);
     res.setHeader('Authorization', token.access_token);
-    return res.status(200).json(user);
+
+    return res.status(HttpStatus.OK).json(user);
   }
 
   @Post('register')
@@ -38,6 +40,7 @@ export class AuthController {
         req.ip,
       );
       res.setHeader('Authorization', token);
+
       return res.status(HttpStatus.CREATED).json(user);
     } catch (error) {
       return res.status(HttpStatus.BAD_REQUEST).json({
@@ -51,6 +54,7 @@ export class AuthController {
   @Delete('sign-out')
   async logout(@Headers('authorization') token: string, @Request() res) {
     token = token.split('Bearer ')[1]; // Extract the token from the header
+
     this.authService.logout(token);
     return res.status(HttpStatus.NO_CONTENT).send();
   }

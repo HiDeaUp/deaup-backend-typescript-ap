@@ -27,14 +27,16 @@ export class AuthService {
     });
 
     if (user && (await bcrypt.compare(password, user.password))) {
-      const { password, ...result } = user;
+      const { ...result } = user;
       return result;
     }
+
     return null;
   }
 
   async login(user: any) {
     const payload = { email: user.email, phone: user.phone, sub: user.id };
+
     return {
       access_token: this.jwtService.sign(payload),
     };
@@ -49,6 +51,7 @@ export class AuthService {
 
     if (existingUser) {
       const field = existingUser.email ? 'email' : 'phone';
+
       throw new Error(`${field} has already been taken`);
     }
 
