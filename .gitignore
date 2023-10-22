@@ -1,5 +1,5 @@
 # config
-ormconfig.json
+.env
 
 # compiled output
 /dist
