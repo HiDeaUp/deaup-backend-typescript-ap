@@ -1,8 +1,8 @@
 {
   "name": "backend-typescript-api",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Backend TypeScript API for MassivePrediction",
+  "author": "Pierre-Henry Soria",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
