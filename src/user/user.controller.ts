@@ -11,16 +11,16 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { UserService } from './user.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @Controller('users')
-export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+export class UserController {
+  constructor(private readonly userService: UserService) {}
 
   @Post('sign-in')
   async login(@Body() body, @Response() res) {
-    const user = await this.authService.validateUser(
+    const user = await this.userService.validateUser(
       body.user.email,
       body.user.phone,
       body.user.password,
@@ -28,7 +28,7 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException();
     }
-    const token = await this.authService.login(user);
+    const token = await this.userService.login(user);
     res.setHeader('Authorization', token.access_token);
 
     return res.status(HttpStatus.OK).json(user);
@@ -37,7 +37,7 @@ export class AuthController {
   @Post('sign-up')
   async signup(@Body() body, @Request() req, @Response() res) {
     try {
-      const { user, token } = await this.authService.register(
+      const { user, token } = await this.userService.register(
         body.user,
         req.ip,
       );
@@ -79,7 +79,7 @@ export class AuthController {
   async logout(@Headers('authorization') token: string, @Response() res) {
     token = token.split('Bearer ')[1]; // Extract the token from the header
 
-    this.authService.logout(token);
+    this.userService.logout(token);
     return res.status(HttpStatus.NO_CONTENT).send();
   }
 }

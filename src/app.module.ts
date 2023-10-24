@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UserModule } from './user/user.module';
 
 const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'postgres',
@@ -17,7 +18,11 @@ const typeOrmConfig: TypeOrmModuleOptions = {
 };
 
 @Module({
-  imports: [ConfigModule.forRoot(), TypeOrmModule.forRoot(typeOrmConfig)],
+  imports: [
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRoot(typeOrmConfig),
+    UserModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

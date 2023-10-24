@@ -6,10 +6,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
 
 import { User } from './user.entity'; // Adjust the path
-import { TokenBlacklistService } from './token-blacklist.service';
+import { TokenBlacklistService } from '../token-blacklist.service';
 
 @Injectable()
-export class AuthService {
+export class UserService {
   constructor(
     private readonly jwtService: JwtService,
     @InjectRepository(User)
