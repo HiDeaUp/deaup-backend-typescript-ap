@@ -62,8 +62,6 @@ export class UserController {
         id: body.user.id,
         email: body.user.email,
         phone: body.user.phone,
-        created_at: body.user.created_at,
-        updated_at: body.user.last_sign_in,
       });
     }
 
