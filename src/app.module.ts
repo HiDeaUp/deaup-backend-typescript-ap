@@ -14,7 +14,8 @@ const typeOrmConfig: TypeOrmModuleOptions = {
   password: process.env.TYPEORM_PASSWORD,
   database: process.env.TYPEORM_DATABASE,
   synchronize: Boolean(process.env.TYPEORM_SYNCHRONIZE),
-  entities: ['dist/**/*.entity{.ts,.js}'],
+  logging: Boolean(process.env.TYPEORM_LOGGING),
+  entities: [__dirname + '/**/*.entity{.ts,.js}'],
 };
 
 @Module({
