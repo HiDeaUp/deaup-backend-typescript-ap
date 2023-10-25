@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
-
+import { v4 as uuidv4 } from 'uuid';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
@@ -17,7 +17,7 @@ export class UserService {
     private readonly tokenBlacklistService: TokenBlacklistService,
   ) {}
 
-  async validateUser(
+  async validateUserCredentials(
     email: string,
     phone: string,
     password: string,
@@ -34,15 +34,17 @@ export class UserService {
     return null;
   }
 
-  async login(user: any) {
-    const payload = { email: user.email, phone: user.phone, sub: user.id };
+  async login(user: User) {
+    const { email, phone, id } = user;
+
+    const payload = { email, phone, sub: id };
 
     return {
       access_token: this.jwtService.sign(payload),
     };
   }
 
-  async register(userDto: any, ipAddress: string) {
+  async signUp(userDto: any, ipAddress: string) {
     const { email, phone, password } = userDto;
 
     const existingUser = await this.userRepository.findOne({
@@ -55,9 +57,11 @@ export class UserService {
       throw new Error(`${field} has already been taken`);
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const id = uuidv4();
+    const hashedPassword = await bcrypt.hash(password, 16);
 
     const user = this.userRepository.create({
+      id,
       email,
       phone,
       password: hashedPassword,

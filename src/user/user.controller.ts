@@ -20,7 +20,7 @@ export class UserController {
 
   @Post('sign-in')
   async login(@Body() body, @Response() res) {
-    const user = await this.userService.validateUser(
+    const user = await this.userService.validateUserCredentials(
       body.user.email,
       body.user.phone,
       body.user.password,
@@ -28,6 +28,7 @@ export class UserController {
     if (!user) {
       throw new UnauthorizedException();
     }
+
     const token = await this.userService.login(user);
     res.setHeader('Authorization', token.access_token);
 
@@ -35,12 +36,9 @@ export class UserController {
   }
 
   @Post('sign-up')
-  async signup(@Body() body, @Request() req, @Response() res) {
+  async signUp(@Body() body, @Request() req, @Response() res) {
     try {
-      const { user, token } = await this.userService.register(
-        body.user,
-        req.ip,
-      );
+      const { user, token } = await this.userService.signUp(body.user, req.ip);
       res.setHeader('Authorization', token);
 
       return res.status(HttpStatus.CREATED).json(user);
