@@ -1,26 +1,29 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
 
+import { database } from './config/database.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
+import { ConfigModule } from '@nestjs/config';
 
 const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'postgres',
-  host: process.env.TYPEORM_HOST,
-  port: Number(process.env.TYPEORM_PORT),
-  username: process.env.TYPEORM_USERNAME,
-  password: process.env.TYPEORM_PASSWORD,
-  database: process.env.TYPEORM_DATABASE,
-  synchronize: Boolean(process.env.TYPEORM_SYNCHRONIZE),
-  logging: Boolean(process.env.TYPEORM_LOGGING),
+  host: database().host,
+  port: Number(database().port),
+  username: database().username,
+  password: database().password,
+  database: database().database,
+  synchronize: Boolean(database().synchronize),
+  logging: Boolean(database().logging),
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
 };
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      load: [database],
+    }),
     TypeOrmModule.forRoot(typeOrmConfig),
     UserModule,
   ],
