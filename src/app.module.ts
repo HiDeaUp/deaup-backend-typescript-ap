@@ -7,15 +7,17 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 
+const databaseConfig = database();
+
 const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'postgres',
-  host: database().host,
-  port: Number(database().port),
-  username: database().username,
-  password: database().password,
-  database: database().database,
-  synchronize: Boolean(database().synchronize),
-  logging: Boolean(database().logging),
+  host: databaseConfig.host,
+  port: Number(databaseConfig.port),
+  username: databaseConfig.username,
+  password: databaseConfig.password,
+  database: databaseConfig.database,
+  synchronize: Boolean(databaseConfig.synchronize),
+  logging: Boolean(databaseConfig.logging),
   entities: [__dirname + '/**/*.entity{.ts,.js}'],
 };
 
