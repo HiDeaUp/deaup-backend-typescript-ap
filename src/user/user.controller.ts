@@ -20,11 +20,13 @@ export class UserController {
 
   @Post('sign-in')
   async login(@Body() body, @Response() res) {
-    const user = await this.userService.validateUserCredentials(
-      body.user.email,
-      body.user.phone,
-      body.user.password,
-    );
+    const { email, phone, password } = body.user;
+
+    const user = await this.userService.validateUserCredentials({
+      email,
+      phone,
+      password,
+    });
 
     if (!user) {
       throw new UnauthorizedException();
@@ -54,22 +56,20 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard) // Protect this endpoint with JWTAuthGuard
   @Post('check-token')
-  async checkToken(@Body() body, @Response() res) {
-    // Check if the token is still valid (usually, it's valid if it hasn't expired)
-    // You may also implement token revocation logic here if needed
+  async checkToken(@Request() req: any) {
+    const user = req.user;
 
-    if (body.user) {
-      return res.status(HttpStatus.OK).json({
-        id: body.user.id,
-        email: body.user.email,
-        phone: body.user.phone,
-      });
+    if (!user) {
+      throw new UnauthorizedException({ error: 'Signature has expired' });
     }
 
-    // If the token has expired or is otherwise invalid
-    return res
-      .status(HttpStatus.UNAUTHORIZED)
-      .json({ error: 'Signature has expired' });
+    return {
+      id: user.id,
+      email: user.email,
+      phone: user.phone,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+    };
   }
 
   @Delete('sign-out')
