@@ -12,6 +12,8 @@ import { JwtStrategy } from './auth/jwt.strategy';
 import { User } from './user.entity';
 import { Token } from './auth/token.entity';
 
+const baseConfig = base();
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Token]),
@@ -20,8 +22,8 @@ import { Token } from './auth/token.entity';
       isGlobal: true,
     }),
     JwtModule.register({
-      secret: base().jwtTokenSecret,
-      signOptions: { expiresIn: base().jwtTokenExpirationTime },
+      secret: baseConfig.jwtTokenSecret,
+      signOptions: { expiresIn: baseConfig.jwtTokenExpirationTime },
     }),
   ],
 
