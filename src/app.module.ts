@@ -23,6 +23,7 @@ const typeOrmConfig: TypeOrmModuleOptions = {
   imports: [
     ConfigModule.forRoot({
       load: [database],
+      isGlobal: true,
     }),
     TypeOrmModule.forRoot(typeOrmConfig),
     UserModule,

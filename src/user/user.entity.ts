@@ -11,6 +11,9 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Column({ nullable: true })
+  jwt_token?: string;
+
   @Column({ unique: true, nullable: true })
   email: string;
 

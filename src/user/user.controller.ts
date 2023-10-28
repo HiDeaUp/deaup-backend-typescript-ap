@@ -41,8 +41,11 @@ export class UserController {
   @Post('sign-up')
   async signUp(@Body() body, @Request() req, @Response() res) {
     try {
-      const { user, token } = await this.userService.signUp(body.user, req.ip);
-      res.setHeader('Authorization', token);
+      const { user, jwtToken } = await this.userService.signUp(
+        body.user,
+        req.ip,
+      );
+      res.setHeader('Authorization', jwtToken);
 
       return res.status(HttpStatus.CREATED).json(user);
     } catch (error) {

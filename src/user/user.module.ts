@@ -8,7 +8,6 @@ import { UserService } from './user.service';
 import { base } from '../config/base.config';
 import { TokenBlacklistService } from '../token-blacklist.service';
 import { JwtStrategy } from '../auth/jwt.strategy';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 import { User } from './user.entity';
 
@@ -17,6 +16,7 @@ import { User } from './user.entity';
     TypeOrmModule.forFeature([User]),
     ConfigModule.forRoot({
       load: [base],
+      isGlobal: true,
     }),
     JwtModule.register({
       secret: base().jwtTokenSecret,
@@ -24,7 +24,7 @@ import { User } from './user.entity';
     }),
   ],
 
-  providers: [UserService, TokenBlacklistService, JwtStrategy, JwtAuthGuard],
+  providers: [UserService, TokenBlacklistService, JwtStrategy],
   controllers: [UserController],
 })
 export class UserModule {}
