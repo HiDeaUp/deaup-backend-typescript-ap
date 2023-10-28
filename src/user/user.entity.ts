@@ -4,15 +4,18 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+
+import { Token } from 'src/user/auth/token.entity';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: true })
-  jwt_token?: string;
+  @OneToMany(() => Token, (token) => token.user)
+  tokens: Token[];
 
   @Column({ unique: true, nullable: true })
   email: string;

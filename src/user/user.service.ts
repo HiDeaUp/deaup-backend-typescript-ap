@@ -7,14 +7,17 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { User } from './user.entity'; // Adjust the path
 import { TokenBlacklistService } from '../token-blacklist.service';
+import { Token } from 'src/user/auth/token.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly jwtService: JwtService,
+    private readonly tokenBlacklistService: TokenBlacklistService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-    private readonly tokenBlacklistService: TokenBlacklistService,
+    @InjectRepository(Token)
+    private readonly tokenRepository: Repository<Token>,
   ) {}
 
   async validateUserCredentials({
@@ -38,14 +41,22 @@ export class UserService {
     return null;
   }
 
-  async findUserByJwtToken(jwtToken: string): Promise<User> {
-    // Look up the user JWT token
+  async findUserByToken(jwtToken: string): Promise<User> {
+    const userToken = await this.tokenRepository.findOne({
+      where: { token: jwtToken },
+      relations: ['user'],
+    });
+    if (!userToken) {
+      throw new UnauthorizedException();
+    }
+
+    // Find and return the user by their JWT token
     const user = await this.userRepository.findOne({
-      where: { jwt_token: jwtToken },
+      where: { id: userToken.user.id },
     });
 
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException();
     }
 
     return user;
@@ -53,15 +64,27 @@ export class UserService {
 
   async login(user: User) {
     const { email, phone, id } = user;
+    let jwtToken;
 
-    const payload = { email, phone, sub: id };
+    // only if the user's JWT token doesn't exist for this user, generate a new jwt token and store it into the database
+    const existingToken = await this.tokenRepository.findOne({
+      where: { user },
+    });
 
-    const userJwtToken = this.jwtService.sign(payload);
+    if (existingToken) {
+      jwtToken = existingToken.token;
+    } else {
+      const payload = { email, phone, sub: id };
+      jwtToken = this.jwtService.sign(payload);
 
-    this.userRepository.update(id, { jwt_token: userJwtToken });
+      await this.tokenRepository.save({
+        token: jwtToken,
+        user,
+      });
+    }
 
     return {
-      access_token: userJwtToken,
+      access_token: jwtToken,
     };
   }
 
@@ -88,10 +111,15 @@ export class UserService {
       phone,
       password: hashedPassword,
       ip_address: ipAddress,
-      jwt_token: jwtToken,
     });
 
-    await this.userRepository.save(user);
+    await Promise.all([
+      this.userRepository.save(user),
+      this.tokenRepository.save({
+        token: jwtToken,
+        user,
+      }),
+    ]);
 
     return { user, jwtToken };
   }
