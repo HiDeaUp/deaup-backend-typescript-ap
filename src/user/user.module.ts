@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { base } from '../config/base.config';
-import { TokenBlacklistService } from '../token-blacklist.service';
+import { TokenBlacklistService } from './token-blacklist.service';
 import { JwtStrategy } from './auth/jwt.strategy';
 
 import { User } from './user.entity';

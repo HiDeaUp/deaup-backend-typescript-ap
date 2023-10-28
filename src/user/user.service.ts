@@ -6,7 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { User } from './user.entity'; // Adjust the path
-import { TokenBlacklistService } from '../token-blacklist.service';
+import { TokenBlacklistService } from './token-blacklist.service';
 import { Token } from 'src/user/auth/token.entity';
 
 @Injectable()
