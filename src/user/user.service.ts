@@ -42,23 +42,28 @@ export class UserService {
   }
 
   async findUserByToken(jwtToken: string): Promise<User> {
+    // Find the token in the database
     const userToken = await this.tokenRepository.findOne({
       where: { token: jwtToken },
       relations: ['user'],
     });
+
+    // If the token is not found, throw an exception
     if (!userToken) {
       throw new UnauthorizedException();
     }
 
-    // Find and return the user by their JWT token
+    // If the token is found, find the user by the token
     const user = await this.userRepository.findOne({
       where: { id: userToken.user.id },
     });
 
+    // If the user is not found, throw an exception
     if (!user) {
       throw new UnauthorizedException();
     }
 
+    // If the user is found, return the user
     return user;
   }
 

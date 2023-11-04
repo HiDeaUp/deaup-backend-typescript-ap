@@ -19,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       const token = ExtractJwt.fromAuthHeaderAsBearerToken();
       const user = await this.userService.findUserByToken(token);
       done(null, user);
-    } catch (err) {
+    } catch (err: any) {
       done(err, false);
     }
   }
