@@ -76,5 +76,9 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "volta": {
+    "node": "20.9.0",
+    "yarn": "3.7.0"
   }
 }
