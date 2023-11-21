@@ -48,7 +48,7 @@ export class UserController {
       res.setHeader('Authorization', jwtToken);
 
       return res.status(HttpStatus.CREATED).json(user);
-    } catch (error) {
+    } catch (error: any) {
       return res.status(HttpStatus.BAD_REQUEST).json({
         errors: {
           [error.message.split(' ')[0]]: [error.message],
