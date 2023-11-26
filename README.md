@@ -1,4 +1,4 @@
-# Backend TypesSript API
+# Backend TypeSript API
 
 ## Installation
 
