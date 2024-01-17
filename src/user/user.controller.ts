@@ -19,9 +19,17 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('sign-in')
-  async login(@Body() body, @Response() res) {
+  async login(@Body() body, @Response() res): Promise<any> {
     const { email, phone, password } = body.user;
 
+    /**
+     * Validates the user credentials.
+     *
+     * @param {string} email - The user's email.
+     * @param {string} phone - The user's phone number.
+     * @param {string} password - The user's password.
+     * @returns {Promise<User>} - The validated user object.
+     */
     const user = await this.userService.validateUserCredentials({
       email,
       phone,
@@ -39,7 +47,7 @@ export class UserController {
   }
 
   @Post('sign-up')
-  async signUp(@Body() body, @Request() req, @Response() res) {
+  async signUp(@Body() body, @Request() req, @Response() res): Promise<any> {
     try {
       const { user, jwtToken } = await this.userService.signUp(
         body.user,
@@ -59,7 +67,7 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard) // Protect this endpoint with JWTAuthGuard
   @Post('check-token')
-  async checkToken(@Request() req: any) {
+  async checkToken(@Request() req: any): Promise<any> {
     const user = req.user;
 
     if (!user) {
@@ -76,10 +84,13 @@ export class UserController {
   }
 
   @Delete('sign-out')
-  async logout(@Headers('authorization') token: string, @Response() res) {
+  async logout(
+    @Headers('authorization') token: string,
+    @Response() res,
+  ): Promise<any> {
     token = token.split('Bearer ')[1]; // Extract the token from the header
 
     this.userService.logout(token);
-    return res.status(HttpStatus.NO_CONTENT).send();
+    return res.status(HttpStatus.NO_CONTENT).send(); // `return` is optional here
   }
 }
