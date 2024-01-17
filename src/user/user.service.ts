@@ -107,8 +107,9 @@ export class UserService {
     }
 
     const id = uuidv4();
+    const passwordSaltLength = 16;
 
-    const salt = await bcrypt.genSalt(16); // generate salt with 16 rounds
+    const salt = await bcrypt.genSalt(passwordSaltLength); // generate salt with 16 rounds
     const hashedPassword = await bcrypt.hash(password, salt);
     const jwtToken = this.jwtService.sign({ email, phone, sub: id });
 
