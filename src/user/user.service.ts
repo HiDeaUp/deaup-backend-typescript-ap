@@ -133,6 +133,7 @@ export class UserService {
   }
 
   logout(token: string) {
+    // retiring token when logging out current user
     this.tokenBlacklistService.addToBlacklist(token);
   }
 }
