@@ -6,6 +6,12 @@
 $ yarn install
 ```
 
+
+### Setup
+1. Rename `.env.dist` file to `.env`
+2. Then, open `.env` and update the database credentials with yours.
+
+
 ## Running the app
 
 ```bash
@@ -18,6 +24,7 @@ $ yarn run start:dev
 # production mode
 $ yarn run start:prod
 ```
+
 
 ## Test
 
